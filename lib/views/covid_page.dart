@@ -14,17 +14,28 @@ class _CovidPageState extends State<CovidPage> {
   @override
   
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Casos Covid'),
+    return Scaffold(      
+      appBar: AppBar(
+        backgroundColor: Colors.red[50],
+        elevation: 0,
+        title: Container(
+          padding: EdgeInsets.only(left: 25),
+          alignment: Alignment.centerLeft,
+          child: Text('Info Covid', style: TextStyle(color: Colors.black, fontSize: 25)),
         ),
-        body: SafeArea(
-          child: Center(
-            child: Container(
-                child: _cargarInfo(),
+      ),
+      body: SafeArea(
+        child: Container(
+          color: Colors.red[50],
+          width: double.infinity,
+          height: double.infinity,
+            child: Center(
+              child: Container(
+                  child: _cargarInfo(),
+              ),
             ),
           ),
-        )
+      ),
     );
   }
 
@@ -49,140 +60,131 @@ class _CovidPageState extends State<CovidPage> {
   }
 
   cargarDatos(All pais) {
-    final textStyleTitle = TextStyle(
-      color: Colors.white,
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-    );
-    final textStyleSubTitle = TextStyle(
-      color: Colors.black,
-      fontSize: 17,
-    );
-    final textStyle = TextStyle(
-      color: Colors.black,
-      fontSize: 25
-    );
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      elevation: 5,
-      child: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.all(10),
-            child: Container(
-              child: Table(
-                children: [
-                  TableRow(
-                    children: [
-                      ListTile(
-                      leading: Image(image: (pais.abbreviation != null)? NetworkImage('https://www.countryflags.io/${pais.abbreviation}/flat/64.png'): NetworkImage('https://www.rawshorts.com/freeicons/wp-content/uploads/2017/01/orange_webpict50_1484337223.png')),
-                      title: Text((pais.country!= null)? pais.country: 'Desconocido', style: textStyleTitle,),
-                      subtitle: Text((pais.continent != null)? '${pais.continent}': 'Desconocido', style: textStyleSubTitle,),
-                ),
-                Table(
-                  children: [
-                    TableRow(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Text('Confirmados'),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Text((pais.confirmed != null)? '${pais.confirmed}': 'Desconocido'),
-                        )
-                        
-                      ]
-                    ),
-                    TableRow(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Text('Recuperados'),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Text((pais.recovered != null)? '${pais.recovered}': 'Desconocido'),
-                        )
-                        
-                      ]
-                    ),
-                    TableRow(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Text('Muertes'),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Text((pais.deaths != null)? '${pais.deaths}': 'Desconocido'),
-                        )
-                        
-                      ]
-                    )
-                  ],
-                )
-                    ]
-                  )
+    return Container(
+      padding: EdgeInsets.only(left: 10, right: 10),
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Colors.blue,
+                  Colors.red,
                 ],
-              )
-            )
+            ),
+            borderRadius: BorderRadius.circular(10),
           ),
-          Row(
+          child: Column(
             children: [
-              Container(
-                padding: EdgeInsets.only(left: 30),
-                child: Text('Datos', style: textStyle),
+              header(pais),
+              content(pais),
+              footer(pais)
+            ],
+          ),
+        )
+      ),
+    );
+  }
+
+    Widget header (All p) {
+      final textStyleTitle = TextStyle(
+        color: Colors.white,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      );
+      return Container(
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.only(left: 30, top: 10),
+              child: Image(
+                  image: (p.abbreviation != null)? NetworkImage('https://www.countryflags.io/${p.abbreviation}/flat/64.png'): AssetImage('assets/no-img.png'),
+              )
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 30, top: 10),
+              child: Text((p.country != null)? '${p.country}':'Desconocido', style: textStyleTitle),
+            )
+          ],
+        ),
+      );
+    }
+
+    Widget content(All p) {
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          padding: EdgeInsets.only(bottom: 10, left: 20, right: 20),
+          child: Row(
+            children: [
+              Chip(
+                label: Text((p.confirmed != null)? 'Total contagios: ${p.confirmed}': 'Desconocido'),
+                avatar: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  child: Image(
+                    image: AssetImage('assets/virus.png'),
+                  ),
+                ),
+              ),
+              SizedBox(width: 10,),
+              Chip(
+                label: Text((p.recovered != null)? 'Total recuperados: ${p.recovered}': 'Desconocido'),
+                avatar: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  child: Image(
+                    image: AssetImage('assets/recuperado.png'),
+                  ),
+                ),
+              ),
+              SizedBox(width: 10,),
+              Chip(
+                label: Text((p.deaths != null)? 'Total muertes: ${p.deaths}': 'Desconocido'),
+                avatar: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  child: Image(
+                    image: AssetImage('assets/cruz.png'),
+                  ),
+                ),
               )
             ],
           ),
+        ),
+      );
+    }
+
+  Widget footer(All pais) {
+    final textStyleSubTitle = TextStyle(
+        color: Colors.white,
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+    );
+    return Container(
+      padding: EdgeInsets.only(bottom: 10, right: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
           Container(
-            padding: EdgeInsets.only(left: 35, top: 10),
-            child: Table(
-              children: [
-                TableRow(
-                  children: [
-                    Text('Capital'),
-                    Text((pais.capitalCity != null)? '${pais.capitalCity}': 'Desconocido'),
-                  ]
-                ),
-                TableRow(
-                  children: [
-                    Text('Habitantes'),
-                    Text((pais.population != null)? '${pais.population}': 'Desconocido'),
-                  ]
-                ),
-                TableRow(
-                  children: [
-                    Text('Area'),
-                    Text((pais.sqKmArea != null)? '${pais.sqKmArea} km.': 'Desconocido'),
-                  ]
-                ),
-                TableRow(
-                  children: [
-                    Text('Ubicación'),
-                    Text((pais.location != null)? '${pais.location}': 'Desconocido'),
-                  ]
-                ),
-                TableRow(
-                  children: [
-                    Text('Esperanza de vida'),
-                    Text((pais.lifeExpectancy != null)? '${pais.lifeExpectancy}': 'Desconocido'),
-                  ]
-                ),
-                TableRow(
-                  children: [
-                    Text('Actualizado'),
-                    Text((pais.updated != null)? '${pais.updated}': 'Desconocido'),
-                  ]
-                ),
-                
-              ],
-            ),
+            child: Text((pais.updated != null)? 'Actualizado: ${pais.updated.substring(0,10)}': 'Desconocido', style: textStyleSubTitle,),
           )
         ],
       ),
-      color: Color(0xffFE6292),
+    );
+  }
+
+  Widget titulo() {
+    return Container(
+      child: Text('Info Covid'),
     );
   }
 }
+
+
+
+
+
